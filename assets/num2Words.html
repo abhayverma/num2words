@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="file:///android_asset/jquery.mobile-1.4.2.min.css">
+<script src="file:///android_asset/jquery-1.10.2.min.js"></script>
+<script src="file:///android_asset/jquery.mobile-1.4.2.min.js"></script>
+<style>
+a{text-decoration:none;}
+input.error { background: red;color: white;}
+label.error { color: red;}
+</style>
+</head>
+<body align="center">
+<!----------------------------------  HOME PAGE  -------------------------------------------->
+<div data-role="page" data-theme="a" id="index">
+  <div data-role="header">
+	<h1>Numbers2Words</h1>
+  </div>
+
+  <div data-role="main" class="ui-content tuf4complaints">
+	<div class="ui-field-contain">
+	<div id="result" style="background-color:#4CC417; border: solid 2px #008000; border-radius:5px;color:white; font-size:25px; font-family: Comic Sans MS Bold">Hello, please type in a number in the box</div><br>
+	  <label for="fullname">Enter a Number :</label>
+        <input type="number" id="number" onkeyup="update();" placeholder="A Number to Convert"/>  
+	</div>
+  </div>
+	<a class="ui-btn" data-theme="b" href="http://www.neonpad.com/num2Words.txt"> Open Souce Code </a>
+  <div data-role="footer" data-position="fixed">
+	<h1>Dimagi Test</h1>
+  </div>
+</div> 
+<!------------------------------ SCRIPT TO CONVERT NUMBER TO WORDS (Script courtesy to Arnon and typo.pl from Stackoverflow quention 5529934)------------------------------->
+<script type="text/javascript">
+function update(){
+    var bigNumArry = new Array('', ' thousand', ' million', ' billion', ' trillion', ' quadrillion', ' quintillion');
+
+    var output = '';
+    var numString =   document.getElementById('number').value;
+    var finlOutPut = new Array();
+
+    if (numString == '0') {
+        document.getElementById('result').innerHTML = 'Zero';
+        return;
+    }
+
+    if (numString == 0) {
+        document.getElementById('result').innerHTML = 'Ahh, I can convert a number only. So please type a number for me.';
+        return;
+    }
+
+    var i = numString.length;
+    i = i - 1;
+
+    //cut the number to grups of three digits and add them to the Arry
+    while (numString.length > 3) {
+        var triDig = new Array(3);
+        triDig[2] = numString.charAt(numString.length - 1);
+        triDig[1] = numString.charAt(numString.length - 2);
+        triDig[0] = numString.charAt(numString.length - 3);
+
+        var varToAdd = triDig[0] + triDig[1] + triDig[2];
+        finlOutPut.push(varToAdd);
+        i--;
+        numString = numString.substring(0, numString.length - 3);
+    }
+    finlOutPut.push(numString);
+    finlOutPut.reverse();
+
+    //conver each grup of three digits to english word
+    //if all digits are zero the triConvert
+    //function return the string "dontAddBigSufix"
+    for (j = 0; j < finlOutPut.length; j++) {
+    finlOutPut[j] = triConvert(parseInt(finlOutPut[j],10));
+	}
+
+    var bigScalCntr = 0; //this int mark the million billion trillion... Arry
+
+    for (b = finlOutPut.length - 1; b >= 0; b--) {
+    if (finlOutPut[b] != "dontAddBigSufix") {
+        finlOutPut[b] = finlOutPut[b] + bigNumArry[bigScalCntr]; // <<<
+        bigScalCntr++;
+    }
+    else {
+        //replace the string at finlOP[b] from "dontAddBigSufix" to empty String.
+        finlOutPut[b] = ' ';
+        bigScalCntr++; //advance the counter  
+    }
+}
+
+    //convert The output Arry to , more printable string 
+    var nonzero = false; // <<<
+    for(n = 0; n<finlOutPut.length; n++){
+        if (finlOutPut[n] != ' ') { // <<<
+            if (nonzero) output += ' , '; // <<<
+            nonzero = true; // <<<
+        } // <<<
+        output +=finlOutPut[n];
+    }
+
+    document.getElementById('result').innerHTML = output;//print the output
+}
+
+//simple function to convert from numbers to words from 1 to 999
+function triConvert(num){
+    var ones = new Array('', ' one', ' two', ' three', ' four', ' five', ' six', ' seven', ' eight', ' nine', ' ten', ' eleven', ' twelve', ' thirteen', ' fourteen', ' fifteen', ' sixteen', ' seventeen', ' eighteen', ' nineteen');
+    var tens = new Array('', '', ' twenty', ' thirty', ' forty', ' fifty', ' sixty', ' seventy', ' eighty', ' ninety');
+    var hundred = ' hundred';
+    var output = '';
+    var numString = num.toString();
+
+    if (num == 0) {
+        return 'dontAddBigSufix';
+    }
+    //the case of 10, 11, 12 ,13, .... 19 
+    if (num < 20) {
+        output = ones[num];
+        return output;
+    }
+
+    //100 and more
+    if (numString.length == 3) {
+        output = ones[parseInt(numString.charAt(0))] + hundred;
+        output += tens[parseInt(numString.charAt(1))];
+        output += ones[parseInt(numString.charAt(2))];
+        return output;
+    }
+
+    output += tens[parseInt(numString.charAt(0))];
+    output += ones[parseInt(numString.charAt(1))];
+
+    return output;
+}   
+</script>
+
+</body>
+</html>
